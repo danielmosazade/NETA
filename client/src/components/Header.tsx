@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const Header: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -13,6 +15,12 @@ const Header: React.FC = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    handleClose();
   };
 
   return (
@@ -26,8 +34,19 @@ const Header: React.FC = () => {
           <Button color="inherit" component={Link} to="/products">מוצרים</Button>
           <Button color="inherit" component={Link} to="/about">אודות</Button>
           <Button color="inherit" component={Link} to="/contact">צור קשר</Button>
-          <Button color="inherit" component={Link} to="/login">התחברות</Button>
-          <Button color="inherit" component={Link} to="/register">הרשמה</Button>
+          {user ? (
+            <>
+              <Typography variant="subtitle1" sx={{ my: 'auto', mx: 2 }}>
+                שלום, {user.name}
+              </Typography>
+              <Button color="inherit" onClick={handleLogout}>יציאה</Button>
+            </>
+          ) : (
+            <>
+              <Button color="inherit" component={Link} to="/login">התחברות</Button>
+              <Button color="inherit" component={Link} to="/register">הרשמה</Button>
+            </>
+          )}
         </Box>
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
           <IconButton
@@ -58,8 +77,17 @@ const Header: React.FC = () => {
             <MenuItem onClick={handleClose} component={Link} to="/products">מוצרים</MenuItem>
             <MenuItem onClick={handleClose} component={Link} to="/about">אודות</MenuItem>
             <MenuItem onClick={handleClose} component={Link} to="/contact">צור קשר</MenuItem>
-            <MenuItem onClick={handleClose} component={Link} to="/login">התחברות</MenuItem>
-            <MenuItem onClick={handleClose} component={Link} to="/register">הרשמה</MenuItem>
+            {user ? (
+              <>
+                <Typography sx={{ px: 2, py: 1 }}>שלום, {user.name}</Typography>
+                <MenuItem onClick={() => { handleLogout(); }}>יציאה</MenuItem>
+              </>
+            ) : (
+              <>
+                <MenuItem onClick={handleClose} component={Link} to="/login">התחברות</MenuItem>
+                <MenuItem onClick={handleClose} component={Link} to="/register">הרשמה</MenuItem>
+              </>
+            )}
           </Menu>
         </Box>
       </Toolbar>

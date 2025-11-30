@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, TextField, Button, Paper, Alert, IconButton, InputAdornment } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Container, Typography, Box, TextField, Button, Paper, Alert } from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useUserAuth } from '../hooks/useUserAuth';
 
 interface RegisterFormData {
+  name: string;
   email: string;
   password: string;
-  confirmPassword: string;
 }
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
+    name: '',
     email: '',
     password: '',
-    confirmPassword: '',
   });
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const navigate = useNavigate();
+  const { loginUser, error: loginError } = useUserAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -30,21 +27,18 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.email || !formData.password || !formData.confirmPassword) {
+    if (!formData.name || !formData.email || !formData.password) {
       setError('אנא מלאו את כל השדות');
       return;
     }
-    if (formData.password !== formData.confirmPassword) {
-      setError('הסיסמאות אינן תואמות');
-      return;
-    }
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
+      await axios.post('http://localhost:5000/api/auth/register', {
+        name: formData.name,
         email: formData.email,
         password: formData.password,
-      });
-      localStorage.setItem('token', response.data.token);
-      navigate('/');
+      }, { withCredentials: true });
+      // After successful registration, automatically login the user
+      await loginUser({ email: formData.email, password: formData.password });
     } catch (err: any) {
       setError(err.response?.data?.message || 'שגיאה בהרשמה');
     }
@@ -59,7 +53,17 @@ const Register: React.FC = () => {
           </Typography>
         </Box>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {loginError && <Alert severity="error" sx={{ mb: 2 }}>{loginError}</Alert>}
         <Box component="form" onSubmit={handleSubmit}>
+          <TextField
+            required
+            fullWidth
+            label="שם משתמש"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            sx={{ mb: 2 }}
+          />
           <TextField
             required
             fullWidth
@@ -75,49 +79,13 @@ const Register: React.FC = () => {
             fullWidth
             label="סיסמה"
             name="password"
-            type={showPassword ? 'text' : 'password'}
+            type="password"
             value={formData.password}
             onChange={handleChange}
-            sx={{ mb: 2 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            required
-            fullWidth
-            label="אימות סיסמה"
-            name="confirmPassword"
-            type={showConfirmPassword ? 'text' : 'password'}
-            value={formData.confirmPassword}
-            onChange={handleChange}
             sx={{ mb: 3 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle confirm password visibility"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    edge="end"
-                  >
-                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
-            הירשם
+            הרשם
           </Button>
         </Box>
       </Paper>

@@ -1,8 +1,5 @@
-# TODO: Connect Client to Server for Authentication Requests
+# TODO: Add Register and Login Routes
 
-## Tasks
-- [x] Update client/src/pages/Login.tsx: Import axios, modify handleSubmit to make POST request to /api/auth/login, handle success (store token, redirect) and errors
-- [x] Update client/src/pages/Register.tsx: Remove name field, import axios, modify handleSubmit to make POST request to /api/auth/register, handle success and errors
-- [x] Run server (npm run dev in server directory)
-- [x] Run client (npm run dev in client directory)
-- [ ] Test login and register functionality in the browser
+- [x] Create server/src/routes/auth.ts with POST /register and POST /login routes
+- [x] Edit server/src/index.ts to connect to MongoDB and mount auth router at /auth
+- [x] Ensure .env file exists with MONGO_URI and JWT_SECRET

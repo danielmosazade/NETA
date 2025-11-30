@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
+import { AuthContext } from '../context/AuthContext';
 
 const Hero: React.FC = () => {
+  const { user } = useContext(AuthContext);
   return (
     <Box
       sx={{
@@ -12,6 +14,11 @@ const Hero: React.FC = () => {
       }}
     >
       <Container maxWidth="md">
+        {user && (
+          <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
+            ברוך הבא, {user.name}!
+          </Typography>
+        )}
         <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
           גלה את הסגנון שלך
         </Typography>
