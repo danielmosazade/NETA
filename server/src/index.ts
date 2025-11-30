@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { router as authRoutes } from "./routes/auth";
+import controllers from "../controllers/controllers";
 
 dotenv.config();
 
@@ -32,6 +33,9 @@ mongoose
 
 // Register auth routes under /api/auth
 app.use("/api/auth", authRoutes);
+
+// Register images routes under /api/images
+app.use("/api/images", controllers);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("TS + Express + Import works!");

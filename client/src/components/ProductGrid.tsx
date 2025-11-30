@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardMedia, Typography, Button, Container, Box } from '@mui/material';
 
 interface Product {
@@ -8,46 +8,49 @@ interface Product {
   image: string;
 }
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'שמלה אלגנטית',
-    price: '$89.99',
-    image: 'https://via.placeholder.com/300x400?text=Elegant+Dress',
-  },
-  {
-    id: 2,
-    name: 'חולצה קזואלית',
-    price: '$49.99',
-    image: 'https://via.placeholder.com/300x400?text=Casual+Shirt',
-  },
-  {
-    id: 3,
-    name: 'ג׳ינס סטיילי',
-    price: '$79.99',
-    image: 'https://via.placeholder.com/300x400?text=Stylish+Jeans',
-  },
-  {
-    id: 4,
-    name: 'בלוזה קיצית',
-    price: '$39.99',
-    image: 'https://via.placeholder.com/300x400?text=Summer+Blouse',
-  },
-  {
-    id: 5,
-    name: 'ז׳קט עור',
-    price: '$129.99',
-    image: 'https://via.placeholder.com/300x400?text=Leather+Jacket',
-  },
-  {
-    id: 6,
-    name: 'נעלי ספורט',
-    price: '$69.99',
-    image: 'https://via.placeholder.com/300x400?text=Sneakers',
-  },
+const productNames = [
+  'שמלה אלגנטית',
+  'חולצה קזואלית',
+  'ג׳ינס סטיילי',
+  'בלוזה קיצית',
+  'ז׳קט עור',
+  'נעלי ספורט',
+];
+
+const productPrices = [
+  '$89.99',
+  '$49.99',
+  '$79.99',
+  '$39.99',
+  '$129.99',
+  '$69.99',
 ];
 
 const ProductGrid: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/images');
+        const images = await response.json();
+        console.log("IMAGES RESPONSE:", images);
+
+        const fetchedProducts = images.slice(0, 6).map((img: any, index: number) => ({
+          id: index + 1,
+          name: productNames[index] || 'Product',
+          price: productPrices[index] || '$0.00',
+          image: img.secure_url,
+        }));
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Failed to fetch images:', error);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
   return (
     <Container maxWidth="lg" sx={{ py: 8 }}>
       <Typography
