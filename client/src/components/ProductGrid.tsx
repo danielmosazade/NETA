@@ -36,7 +36,7 @@ const ProductGrid: React.FC = () => {
         const images = await response.json();
         console.log("IMAGES RESPONSE:", images);
 
-        const fetchedProducts = images.slice(0, 6).map((img: any, index: number) => ({
+        const fetchedProducts = images.map((img: any, index: number) => ({
           id: index + 1,
           name: productNames[index] || 'Product',
           price: productPrices[index] || '$0.00',

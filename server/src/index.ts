@@ -2,9 +2,8 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import { router as authRoutes } from "./routes/auth";
-import controllers from "../controllers/controllers";
-
+import cloudinaryRouter from "./routes/cloudinaryRoutes";
+import authenticationRoutes from "./routes/authenticationRoutes"
 dotenv.config();
 
 const app = express();
@@ -20,7 +19,9 @@ app.use((req, res, next) => {
   next();
 });
 
+
 // Connect to MongoDB
+console.log(process.env.MONGO_URL);
 const mongoUri = process.env.MONGO_URL || "";
 mongoose
   .connect(mongoUri)
@@ -31,11 +32,8 @@ mongoose
     console.error("Failed to connect to MongoDB", err);
   });
 
-// Register auth routes under /api/auth
-app.use("/api/auth", authRoutes);
-
-// Register images routes under /api/images
-app.use("/api/images", controllers);
+app.use("/api/images", cloudinaryRouter);
+app.use("/api/auth", authenticationRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("TS + Express + Import works!");
