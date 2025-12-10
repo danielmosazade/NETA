@@ -6,6 +6,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  role: string;
 }
 
 interface AuthContextType {
@@ -27,14 +28,28 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    // On mount, check token cookie and localStorage for user info to rehydrate state
-    const token = Cookies.get('token');
-    const storedUser = localStorage.getItem('user');
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/me", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      const data = await response.json();
+      if (data.user) {
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (err) {
+      setUser(null);
     }
-  }, []);
+  };
+
+  checkAuth();
+}, []);
+
 
   const logout = () => {
     setUser(null);

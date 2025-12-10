@@ -2,13 +2,16 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 import cloudinaryRouter from "./routes/cloudinaryRoutes";
 import authenticationRoutes from "./routes/authenticationRoutes"
+import adminRoute from "./routes/adminRoute";
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
@@ -34,7 +37,8 @@ mongoose
 
 app.use("/api/images", cloudinaryRouter);
 app.use("/api/auth", authenticationRoutes);
-
+app.use("/api/me", adminRoute);
+ 
 app.get("/", (req: Request, res: Response) => {
   res.send("TS + Express + Import works!");
 });

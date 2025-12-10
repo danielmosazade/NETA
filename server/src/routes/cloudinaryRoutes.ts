@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getImages } from "../controllers/cloudControllers"
+import { getImages } from "../controllers/CloudControllers"
 
 const router = Router();
 
