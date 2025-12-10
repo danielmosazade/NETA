@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import cloudinaryRouter from "./routes/cloudinaryRoutes";
 import authenticationRoutes from "./routes/authenticationRoutes"
 import adminRoute from "./routes/adminRoute";
+import cartRoutes from "./routes/cartRoutes";
 dotenv.config();
 
 const app = express();
@@ -38,6 +39,8 @@ mongoose
 app.use("/api/images", cloudinaryRouter);
 app.use("/api/auth", authenticationRoutes);
 app.use("/api/me", adminRoute);
+app.use("/api/cart", cartRoutes);
+
  
 app.get("/", (req: Request, res: Response) => {
   res.send("TS + Express + Import works!");

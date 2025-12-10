@@ -8,14 +8,19 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Badge,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { CartContext } from "../context/CartContext";
+import type { CartItem } from "../context/CartContext"; // type-only import
 
 const Header: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { user, logout } = useContext(AuthContext);
+  const { cart } = useContext(CartContext);
   const navigate = useNavigate();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -32,6 +37,12 @@ const Header: React.FC = () => {
     handleClose();
   };
 
+  // חישוב מספר הפריטים בעגלה
+  const cartItemCount: number = cart.reduce(
+    (sum: number, item: CartItem) => sum + item.quantity,
+    0
+  );
+
   return (
     <AppBar
       position="static"
@@ -45,7 +56,8 @@ const Header: React.FC = () => {
         >
           חנות אופנה
         </Typography>
-        <Box sx={{ display: { xs: "none", md: "flex" } }}>
+
+        <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
           <Button color="inherit" component={Link} to="/">
             בית
           </Button>
@@ -58,11 +70,20 @@ const Header: React.FC = () => {
           <Button color="inherit" component={Link} to="/contact">
             צור קשר
           </Button>
+
           {user ? (
             <>
               <Typography variant="subtitle1" sx={{ my: "auto", mx: 2 }}>
                 שלום, {user.name}
               </Typography>
+
+              {/* כפתור עגלת קניות עם Badge */}
+              <IconButton color="inherit" onClick={() => navigate("/cart")}>
+                <Badge badgeContent={cartItemCount} color="secondary">
+                  <ShoppingCartIcon />
+                </Badge>
+              </IconButton>
+
               <Button color="inherit" onClick={handleLogout}>
                 יציאה
               </Button>
@@ -78,6 +99,8 @@ const Header: React.FC = () => {
             </>
           )}
         </Box>
+
+        {/* תפריט לנייד */}
         <Box sx={{ display: { xs: "flex", md: "none" } }}>
           <IconButton
             size="large"
@@ -88,18 +111,13 @@ const Header: React.FC = () => {
           >
             <MenuIcon />
           </IconButton>
+
           <Menu
             id="menu-appbar"
             anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
             keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
@@ -115,11 +133,13 @@ const Header: React.FC = () => {
             <MenuItem onClick={handleClose} component={Link} to="/contact">
               צור קשר
             </MenuItem>
+
             {user
               ? [
-                  <Typography key="username" sx={{ px: 2, py: 1 }}>
-                    שלום, {user.name}
-                  </Typography>,
+                  <MenuItem key="hello">שלום, {user.name}</MenuItem>,
+                  <MenuItem key="cart" onClick={() => navigate("/cart")}>
+                    עגלת קניות ({cartItemCount})
+                  </MenuItem>,
                   <MenuItem key="logout" onClick={handleLogout}>
                     יציאה
                   </MenuItem>,
