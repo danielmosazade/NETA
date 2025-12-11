@@ -25,7 +25,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [cart, setCart] = useState<CartItem[]>([]);
   const { user } = useContext(AuthContext);
 
-  // 🔹 פונקציה מסודרת להוצאת ה-token מה-cookie
   const getToken = () => {
     return document.cookie
       .split("; ")
@@ -33,7 +32,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ?.split("=")[1];
   };
 
-  // 📌 טעינת עגלה מהשרת
   const loadCart = async () => {
     try {
       const token = getToken();

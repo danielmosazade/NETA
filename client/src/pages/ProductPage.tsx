@@ -11,6 +11,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 interface Product {
   id: number;
@@ -63,6 +64,7 @@ const ProductPage: React.FC = () => {
   const handleAdd = async () => {
     if (!user) {
       navigate("/login");
+      toast.info("אנא התחבר כדי להוסיף מוצרים לעגלה");
       return;
     }
 
@@ -75,10 +77,12 @@ const ProductPage: React.FC = () => {
           image: product.image,
         });
       }
-
-      alert("המוצר נוסף לעגלה!");
     } catch (err) {
       console.error(err);
+      toast.error("אירעה שגיאה בעת הוספת המוצר לעגלה.");
+    }
+    finally{
+      toast.success("המוצר נוסף לעגלה בהצלחה!");
     }
   };
 

@@ -13,6 +13,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import CartPage from "./pages/CartPage";
 import ProductPage from "./pages/ProductPage";
+import { ToastContainer } from "react-toastify";
 
 const theme = createTheme({
   palette: {
@@ -31,6 +32,7 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <ToastContainer />
       <CssBaseline />
       <AuthProvider>
         <CartProvider>
