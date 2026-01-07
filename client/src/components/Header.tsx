@@ -20,6 +20,8 @@ import type { CartItem } from "../context/CartContext"; // type-only import
 const Header: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { user, logout } = useContext(AuthContext);
+  console.log(user);
+  
   const { cart } = useContext(CartContext);
   const navigate = useNavigate();
 

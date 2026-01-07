@@ -33,8 +33,8 @@ export const registerUser = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // בפיתוח חייב להיות false
-      sameSite: "none", // חשוב כי יש שני דומיינים שונים
+      secure: false, // נכון ל־HTTP
+      sameSite: "lax", // ← זה הפתרון
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -76,8 +76,8 @@ export const loginUser = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // בפיתוח חייב להיות false
-      sameSite: "none", // חשוב כי יש שני דומיינים שונים
+      secure: false, // נכון ל־HTTP
+      sameSite: "lax", // ← זה הפתרון
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -94,10 +94,8 @@ export const loginUser = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-export const isAdmin = async (req: Request, res: Response) => {
-  console.log("isAdmin called");
-  console.log("Headers:", req.headers.authorization);
-  console.log("Cookies:", req.cookies);
+export const getCurrentUser = async (req: Request, res: Response) => {
+
 
   // Check for token in Authorization header or cookies
   const header = req.headers.authorization || "";

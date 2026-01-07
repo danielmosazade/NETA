@@ -1,6 +1,6 @@
-import React, { createContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
-import Cookies from 'js-cookie';
+import React, { createContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import axios from "axios";
 
 interface User {
   id: string;
@@ -26,36 +26,42 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  // 1️⃣ טעינה ראשונית מ־localStorage (מהיר)
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-useEffect(() => {
-  const checkAuth = async () => {
+ useEffect(() => {
+  const fetchUser = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/me", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      const data = await response.json();
-      if (data.user) {
-        setUser(data.user);
+      const res = await axios.get(
+        "http://localhost:5000/api/auth/me",
+        { withCredentials: true }
+      );
+      if (res.data.user) {
+        setUser(res.data.user);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
       } else {
         setUser(null);
+        localStorage.removeItem("user");
       }
     } catch (err) {
+      console.error(err);
       setUser(null);
+      localStorage.removeItem("user");
     }
   };
 
-  checkAuth();
+  fetchUser();
 }, []);
 
 
-  const logout = () => {
+  // 3️⃣ logout
+  const logout = async () => {
     setUser(null);
-    localStorage.removeItem('user');
-    Cookies.remove('token', { path: '/' });
-    // Optionally, redirect to login page or home
+    localStorage.removeItem("user");
+
   };
 
   return (
